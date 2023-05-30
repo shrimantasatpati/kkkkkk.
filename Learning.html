@@ -1,0 +1,76 @@
+<html>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <body>
+    <script>
+      let data = [// existing data points
+              {Sad: 10, Happy: 6, Anger: 3, Stress: 4, Excited: 7, Disappointed: 2, a: 1, b: 3, c: 4},
+              {Sad: 4, Happy: 8, Anger: 6, Stress: 2, Excited: 5, Disappointed: 7, a: 2, b: 5, c: 9},
+              {Sad: 7, Happy: 2, Anger: 5, Stress: 8, Excited: 1, Disappointed: 4, a: 3, b: 5, c: 1},
+              {Sad: 3, Happy: 7, Anger: 4, Stress: 6, Excited: 2, Disappointed: 8, a: 7, b: 4, c: 9}, // new data point
+              ];
+      let features = ["Sad", "Happy", "Anger", "Stress", "Excited", "Disappointed", "a", "b", "c"];
+      //generate the data
+        //for (var i = 0; i < 8; i++){
+       	 //var point = {}
+        //each feature will be a random number from 1-9
+         //features.forEach(f => point[f] = 1 + Math.random() * 8);
+         //data.push(point);
+       // }
+      console.log(data);
+      let width = 600;
+      let height = 600;
+      let svg = d3.select("body").append("svg")
+                  .attr("width", width)
+                  .attr("height", height);
+      let radialScale = d3.scaleLinear()
+                          .domain([0, 10])
+                          .range([0, 250]);
+      let ticks = [2, 4, 6, 8, 10];
+      // Draw the circles for the ticks
+      ticks.forEach(t =>
+        svg.append("circle")
+           .attr("cx", width / 2)
+           .attr("cy", height / 2)
+           .attr("fill", "none")
+           .attr("stroke", "gray")
+           .attr("r", radialScale(t))
+      );
+      // Draw the lines for each feature
+      features.forEach((feature, i) => {
+        let angle = (Math.PI / 3) * i;
+        let x = width / 2 + radialScale(10) * Math.cos(angle);
+        let y = height / 2 + radialScale(10) * Math.sin(angle);
+        svg.append("line")
+           .attr("x1", width / 2)
+           .attr("y1", height / 2)
+           .attr("x2", x)
+           .attr("y2", y)
+           .attr("stroke", "gray");
+        svg.append("text")
+           .attr("x", x + 10)
+           .attr("y", y - 10)
+           .text(feature);
+      });
+      // Draw the data as polygons
+      data.forEach(d => {
+        let coordinates = features.map((f, i) => {
+          let angle = (Math.PI / 3) * i;
+          let value = d[f];
+          let x = width / 2 + radialScale(value) * Math.cos(angle);
+          let y = height / 2 + radialScale(value) * Math.sin(angle);
+          return `${x},${y}`;
+        });
+        coordinates.push(coordinates[0]);
+        svg.append("polygon")
+           .attr("points", coordinates.join(" "))
+           .attr("fill-opacity", 0)
+           .attr("stroke-width", 2)
+           .attr("stroke", "blue")
+           .attr("fill", "white");
+      });
+    </script>
+  </body>
+</html>
+
+
+
